@@ -7,8 +7,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'list',
       component: () => import('./views/List.vue')
+    },
+    {
+      path: '/chat',
+      name: 'chat',
+      component: () => import('./views/Chat.vue')
     }
   ]
 })
