@@ -11,22 +11,47 @@
             </div>
         </div>
         <div class="contacts">
-            <div class="contacts-user">
+            <div class="contacts-user" v-for="user in users" :key="user.id">
                 <div class="contacts-user-avatar"></div>
                 <div class="contacts-user-info">
-                    <h2 class="contacts-user-name">Paco</h2>
-                    <p class="contacts-user-last-message">Lorem ipsum dolor sit amet...</p>
+                    <h2 class="contacts-user-name" >{{ user.fields.Username }}</h2>
+                    <!-- <p class="contacts-user-last-message">Lorem ipsum dolor sit amet...</p> -->
                 </div>
-                <router-link :to="{ name: 'chat' }" class="contacts-user-go"><i class="fas fa-chevron-right"></i></router-link>
+                <router-link :to="{ name: 'chat', params: { emisor: me, receptor: user.id }}" class="contacts-user-go"><i class="fas fa-chevron-right"></i></router-link>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+
+
+
 export default {
     name: 'list',
     components: {
+    },
+    data: function () {
+        return {
+            users: [],
+            loading: true,
+            me: 'recg2NP5wTXVxqnmj'
+        }
+    },
+    mounted: function () {
+        let that = this;
+        axios.get('https://api.airtable.com/v0/appCswOBjla31jRfk/User?view=Grid%20view')
+            .then(function (response) {
+                that.users = response.data.records;
+                that.loadings = false
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+            });
     }
 }
 </script>
