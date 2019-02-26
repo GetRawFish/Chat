@@ -17,7 +17,7 @@
                     <h2 class="contacts-user-name" >{{ user.fields.Username }}</h2>
                     <!-- <p class="contacts-user-last-message">Lorem ipsum dolor sit amet...</p> -->
                 </div>
-                <router-link :to="{ name: 'chat', params: { emisor: me, receptor: user.id }}" class="contacts-user-go"><i class="fas fa-chevron-right"></i></router-link>
+                <router-link :to="{ name: 'chat', params: { emisor: $route.params.emisor, receptor: user.id }}" class="contacts-user-go"><i class="fas fa-chevron-right"></i></router-link>
             </div>
         </div>
     </div>
@@ -34,8 +34,7 @@ export default {
     data: function () {
         return {
             users: [],
-            loading: true,
-            me: 'recg2NP5wTXVxqnmj'
+            loading: true
         }
     },
     mounted: function () {
