@@ -7,11 +7,12 @@
         <div class="search">
             <div class="search-field">
                 <button class="search-button"><i class="fas fa-search"></i></button>
-                <input type="text" class="search-input">
+                <input type="text" class="search-input" v-model="lookUp">
             </div>
         </div>
+        <Loading v-if="loading"></Loading>
         <div class="contacts">
-            <div class="contacts-user" v-for="user in users" :key="user.id">
+            <div class="contacts-user" v-for="user in usersFilter" :key="user.id">
                 <div class="contacts-user-avatar"></div>
                 <div class="contacts-user-info">
                     <h2 class="contacts-user-name" >{{ user.fields.Username }}</h2>
@@ -24,17 +25,17 @@
 </template>
 
 <script>
-
-
-
+import Loading from '@/components/Loading.vue'
 export default {
     name: 'list',
     components: {
+        Loading
     },
     data: function () {
         return {
-            users: [],
-            loading: true
+            users: undefined,
+            loading: true,
+            lookUp: ''
         }
     },
     mounted: function () {
@@ -42,7 +43,7 @@ export default {
         axios.get('https://api.airtable.com/v0/appCswOBjla31jRfk/User?view=Grid%20view')
             .then(function (response) {
                 that.users = response.data.records;
-                that.loadings = false
+                that.loading = false;
             })
             .catch(function (error) {
                 // handle error
@@ -51,6 +52,19 @@ export default {
             .then(function () {
                 // always executed
             });
+    },
+    computed: {
+        usersFilter: function () {
+            let shortListUsers = [];
+            if (this.users != undefined) {
+                for (let user of this.users) {
+                    if (this.lookUp == '' || user.fields.Username.toUpperCase().includes(this.lookUp.toUpperCase())) {
+                        shortListUsers.push(user);
+                    }
+                }
+            }
+            return shortListUsers;
+        }
     }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="chat-chat container">
+    <div class="chat container">
         <!-- <router-link to="/">Home</router-link> -->
         <div class="header">
             <div class="header-contact-bg"></div>
@@ -18,8 +18,8 @@
             </div>
         </div>
         <div class="write">
-            <input type="text" v-model="textoNuevoMensaje">
-            <button @click.prevent="nuevoMensaje">Enviar</button>
+            <input type="text" v-model="textoNuevoMensaje" @keyup.enter="nuevoMensaje">
+            <button @click.prevent="nuevoMensaje" >Enviar</button>
         </div>
     </div>
 </template>
@@ -80,7 +80,9 @@ export default {
             let that = this
             axios.get(`https://api.airtable.com/v0/appCswOBjla31jRfk/Message?view=Grid%20view&filterByFormula=OR(AND({Emisor}="${that.emisorUsername}", {Receptor}="${that.receptorUsername}"), AND({Emisor}="${that.receptorUsername}", {Receptor}="${that.emisorUsername}"))`)
                 .then(function (response) {
-                    that.mensajes = response.data.records;
+                    if (response.data.records.length != that.mensajes.length) {
+                        that.mensajes = response.data.records;
+                    }
                 })
                 .catch(function (error) {
                     // handle error
@@ -118,11 +120,17 @@ export default {
         // Refrescamos el mensaje
 
         }
+    },
+    updated: function () {
+        '.chat-chat'.scrollTo(0, document.body.scrollHeight);
     }
 }
 </script>
 <style lang="postcss" scoped>
-    .chat-chat {
+p {
+    margin: 0;
+}
+    .chat {
         background-color: cadetblue;
         height: 100vh;
     }
@@ -131,6 +139,11 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        z-index: 100;
     }
     .header-contact-bg {
         width: 100%;
@@ -169,5 +182,10 @@ export default {
         display: flex;
         justify-content: space-around;
         align-items: center;
+    }
+    .chat-chat {
+        z-index: 1;
+        overflow: auto;
+        height: calc(100% - 100px);
     }
 </style>
