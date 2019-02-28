@@ -7,8 +7,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'user',
-      component: () => import('./views/User.vue')
+      name: 'login',
+      component: () => import('./views/Login.vue')
+    },
+    {
+      path: '/registro',
+      name: 'registro',
+      component: () => import('./views/Registro.vue')
     },
     {
       path: '/list/:emisor',

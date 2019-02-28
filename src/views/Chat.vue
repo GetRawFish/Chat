@@ -122,7 +122,8 @@ export default {
         }
     },
     updated: function () {
-        $div.scrollTo(0, document.$('#chatChat').scrollHeight);
+        let chatChat = document.querySelector('#chatChat');
+        chatChat.scrollTo(0, chatChat.scrollHeight);
     }
 }
 </script>
