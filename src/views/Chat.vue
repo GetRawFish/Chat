@@ -12,7 +12,7 @@
                 </div>
             </div>
         </div>
-        <div class="chat-chat" >
+        <div class="chat-chat" id="chatChat">
             <div v-for="mensaje in mensajes" :key="mensaje.id">
                 <p :class="{'chat-received': mensaje.fields.Receptor[0] == $route.params.receptor, 'chat-sent': mensaje.fields.Receptor[0] != $route.params.receptor}">{{ mensaje.fields.Text }}</p>
             </div>
@@ -122,7 +122,7 @@ export default {
         }
     },
     updated: function () {
-        '.chat-chat'.scrollTo(0, document.body.scrollHeight);
+        $div.scrollTo(0, document.$('#chatChat').scrollHeight);
     }
 }
 </script>
