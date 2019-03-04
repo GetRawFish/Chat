@@ -6,63 +6,85 @@
                 <router-link :to="{ name: 'registro'}"><h1 class="registro activo">
                     Registrarse
                 </h1></router-link>
-                <h1 class="login desactivado">
-                    Logearse
-                </h1>
+                <Loading v-if="loading" mensaje="Un segundo, por favor"></Loading>
             </div>
             <div class="logearse">
+                <p v-if="errorLogin">Los datos introducidos son incorrectos</p>
                 <label for="name" class="reg-input">Username</label>
-                <input type="text" class="reg-input" name="name" placeholder="username">
-                <p></p>
+                <input type="text" class="reg-input" name="name" placeholder="username" v-model="username" @keyup.enter="iniciarSesion">
                 <label for="password" class="reg-input">Password</label>
-                <input type="password" class="reg-input" name="password" placeholder="password">
-                <p></p>
-                <input type="button" value="Logearse" class="reg-input reg-button">
+                <input type="password" class="reg-input" name="password" placeholder="password" v-model="password" @keyup.enter="iniciarSesion">
+                <input type="button" value="Logearse" class="reg-input reg-button" @click.prevent="iniciarSesion">
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import Loading from '@/components/Loading.vue'
 
 export default {
     name: 'login',
     components: {
+        Loading
     },
     data: function () {
         return {
             usuarios: [],
-            loading: true,
+            loading: false,
             username: '',
             password: '',
-            rePassword: '',
-            error: false,
-            mensajeError: '',
-
+            errorLogin: false,
+            logingLoading: ''
         }
     },
-    /* mounted: function () {
-        let that = this;
-        if (!this.error) {
-            axios.get(`https://api.airtable.com/v0/appCswOBjla31jRfk/User?view=Grid%20viewfilterByFormula=AND({Username}="${that.username}", {Password}="${that.password}"`)
-                .then(function (response) {
-                    that.usuarios = response.data.records;
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                })
-                .then(function () {
-                    // always executed
-                });
-        }
+    mounted: function () {
+        this.autoLogin();
     },
     methods: {
-        registrarse: function () {
-            
+        autoLogin: function () {
+            let usuario = JSON.parse(localStorage.getItem('usuario'));
+            if (usuario != null) {
+                this.$router.push (
+                    { name: 'list', params: { emisor: usuario.id } }
+                )
+            }
+        },
+        iniciarSesion: function () {
+            this.validarUsuario();
+        },
+        validarUsuario: function () {
+            let that = this;
+            this.loading = true;
+            this.errorLogin = false;
+            axios.get(`https://api.airtable.com/v0/appCswOBjla31jRfk/User?view=Grid%20view&filterByFormula=AND(UPPER({Username})="${that.username.toUpperCase()}", {Password}="${that.password}")`)
+            .then(function (response) {
+                if (response.data.records.length > 0) {
+                    // guardamos el usuario, 'usuario' nombre que damos nosotros
+                    localStorage.setItem('usuario', JSON.stringify({
+                            id: response.data.records[0].id,
+                            username: that.username
+                        }));
+                    // cambiamos de pantalla a lista de usuarios
+                    that.$router.push(
+                        { name: 'list', params: { emisor: response.data.records[0].id} }
+                    );
+                } else {
+                    // usuario no existe
+                    that.errorLogin = true
+                }
+                console.log(response);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+                that.loading = false;
+            });
         }
-    } */
+    }
 }
 
 </script>

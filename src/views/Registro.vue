@@ -11,16 +11,17 @@
                 </h1></router-link>
             </div>
             <div class="registrarse">
+                <p v-if="warning">Debes completar todos los datos</p>
                 <label for="name" class="reg-input">Username</label>
                 <input type="text" class="reg-input" name="name" placeholder="username" v-model="username" @input="retardoComprobarUsername">
                 <p v-if="usernameError">El usuario ya existe</p>
                 <label for="password" class="reg-input">Password</label>
-                <input type="password" class="reg-input" name="password" placeholder="password">
-                <p></p>
+                <input type="password" class="reg-input" name="password" placeholder="password" v-model="password">
                 <label for="re-password" class="reg-input">Re-Password</label>
                 <input type="password" class="reg-input" name="re-password" placeholder="re-password" v-model="rePassword">
-                <p >Las contraseñas deben ser iguales</p>
-                <input type="button" value="Registrarse" class="reg-input reg-button">
+                <p v-if="password === rePassword"></p>
+                <p v-else>Las contraseñas deben ser iguales</p>
+                <input type="button" value="Registrarse" class="reg-input reg-button" @click="enviarDatos">
             </div>
         </div>
     </div>
@@ -39,7 +40,8 @@ export default {
             usernameError: false,
             password: '',
             rePassword: '',
-            errorPassword: false
+            errorPassword: false,
+            warning: false
         }
     },
     mounted: function () {
@@ -68,9 +70,27 @@ export default {
         retardoComprobarUsername: function () {
             setTimeout(this.comprobarUsername, 200)
         },
-        comprobarPassword: function () {
-            if (this.password != this.rePassword) {
-
+        enviarDatos: function () {
+            let that = this;
+            if (this.username != '' && ((this.password != '' && this.rePassword != '') || this.password === this.rePassword)) {
+                axios.post('https://api.airtable.com/v0/appCswOBjla31jRfk/User?view=Grid%20view', {
+                    "fields": {
+                        "Username": that.username,
+                        "Password": that.password,
+                    }
+                })
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
+                });
+            } else {
+                this.warning = true;
             }
         }
     }

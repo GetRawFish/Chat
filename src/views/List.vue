@@ -3,6 +3,7 @@
         <!-- <router-link to="/">Home</router-link> -->
         <div class="header">
             <h1 class="header-title">Chats activos</h1>
+            <button @click="cerrarSesion">Cerrar Sesión</button>
         </div>
         <div class="search">
             <div class="search-field">
@@ -64,6 +65,14 @@ export default {
                 }
             }
             return shortListUsers;
+        }
+    },
+    methods: {
+        cerrarSesion: function () {
+            localStorage.removeItem('usuario');
+            this.$router.push (
+                { name: 'login' }
+            )
         }
     }
 }

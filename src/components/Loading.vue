@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <h1>Cargandose</h1>
+    <h1>{{ mensaje }}</h1>
   </div>
 </template>
 
@@ -8,6 +8,10 @@
 export default {
   name: 'Loading',
   props: {
+    mensaje: {
+      default: 'Cargandose',
+      type: String
+    }
   }
 }
 </script>
